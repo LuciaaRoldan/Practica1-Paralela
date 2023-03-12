@@ -84,7 +84,7 @@ def consumer(valores, sol,non_empty_list,empty_list):
         empty_list[indice].release()
         delay()
         # se reduce en uno la capacidad del semáforo encargado de comprobrar
-        # que existen valores almacenados en el buffer de dicho productor.
+        # que existe un valor almacenado por dicho productor.
         non_empty_list[indice].acquire()
         
             
