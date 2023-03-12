@@ -27,13 +27,13 @@ def producer(valores,non_empty,empty):
     for v in range(N):
         print (f"producer {current_process().name} produciendo")
         delay(6)
-        empty.acquire() # Se va a aumentar en uno el número de elementos almacenados en el buffer.
-        # Por tanto se comprueba si hay hueco.
+        empty.acquire() # Se va a actualizar el elemento almacenado.
+        # Por tanto se comprueba si la posición está libre.
         ultimo_valor = new_data(ultimo_valor) # Se genera el nuevo valor.
         valores[i] = ultimo_valor # Se actualiza en la posición respectiva del productor el nuevo valor
         print (f"producer {current_process().name} ha almacenado {ultimo_valor}")
         non_empty.release() #se aumenta en uno la capacidad del semáforo encargado de regular 
-        # la existencia de valores en el buffer antes de consumir.
+        # la existencia de valores antes de consumir.
     # Por último se repite el proceso añadiendo un -1 como símbolo de finalización de la produción.
     empty.acquire()
     valores[i] = -1
@@ -80,7 +80,7 @@ def consumer(valores, sol,non_empty_list,empty_list):
         valores[indice] = -2 # se actualiza la posición como vacía en dicho productor.
         print (f"consumido {valor} del productor {indice}")
         # Se aumenta en uno la capacidad del semáforo (del proceso del cual se ha consumido)
-        # que se encarga de comprobrar la existencia de posiciones libres en los buffers antes de producir.
+        # que se encarga de comprobrar que esté libre la posición de almacenaje antes de producir.
         empty_list[indice].release()
         delay()
         # se reduce en uno la capacidad del semáforo encargado de comprobrar
