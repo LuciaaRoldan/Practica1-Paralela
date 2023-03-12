@@ -32,7 +32,7 @@ def producer(buffer,non_empty,empty,M):
         ultimo_valor = new_data(ultimo_valor) #se genera el nuevo valor.
         buffer[indice_escritura] = ultimo_valor #se almacena dicho valor en la posición correspondiente.
         indice_escritura =(indice_escritura + 1) % M # se aumenta en 1 (módulo la capacidad del buffer)
-        print (f"producer {current_process().name} almacenado {ultimo_valor}")
+        print (f"producer {current_process().name} ha almacenado {ultimo_valor}")
         buffer_actual = [i for i in buffer] #se devuelve por pantalla el estado del buffer modificado.
         print(f"así se encuentra el buffer de {current_process().name}: {buffer_actual}")
         non_empty.release() #se aumenta en uno la capacidad del semáforo encargado de regular 
@@ -40,6 +40,7 @@ def producer(buffer,non_empty,empty,M):
     # Por último se repite el proceso añadiendo un -1 como símbolo de finalización de la produción.
     empty.acquire()
     buffer[indice_escritura] = -1
+    print (f"producer {current_process().name} ha terminado de producir")
     non_empty.release()
     
 #La función minimo devuelve el mínimo valor distinto de -1  en una lista
@@ -87,7 +88,7 @@ def consumer(buffers, sol,non_empty_list,empty_list,lectura,M):
         buffers[indice][lectura[indice]] = -2 #se actualiza la posición como vacía en dicho productor.
         lectura[indice] = (lectura[indice]+1)%M 
         # se aumenta en uno (módulo la capacidad del buffer) el índice de lectura del productor del cúal se ha consumido un valor. 
-        print (f" almacenando {valor} del productor {indice}")
+        print (f" consumido {valor} del productor {indice}")
         # se aumenta en uno la capacidad del semáforo (del proceso del cual se ha consumido)
         # que se encarga de comprobrar la existencia de posiciones libres en los buffers antes de producir.
         empty_list[indice].release()
@@ -104,19 +105,19 @@ def main():
      buffers = [Array('i',M) for j in range(NPROD)]
      # Se inicializan los buffers con posiciones vacías.
      for buffer in buffers:
-     	for i in range(M):
-     		buffer[i] = -2 
+         for j in range(M):
+             buffer[j] = -2 
              
      # Se almacena en un array el índice de lectura de cada buffer
      # el cual recibirá el consumidor para saber de dónde debe leer ya que 
      # se va a trabajar con buffers circulares.
-     posiciones_lectura_buffer=Array('i',NPROD)
+     posiciones_lectura_buffer = Array('i',NPROD)
      # Se inicializan las posiciones de lectura en la primera posición.
      for i in range(NPROD):
-     	posiciones_lectura_buffer[i] = 0 
+         posiciones_lectura_buffer[i] = 0 
          
      # Solución es la lista donde se irán almacenando de forma ordenada
-     # los valores producidos.     
+     # los valores producidos.
      manager = Manager()
      solucion= manager.list()
      

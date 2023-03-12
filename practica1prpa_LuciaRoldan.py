@@ -31,12 +31,13 @@ def producer(valores,non_empty,empty):
         # Por tanto se comprueba si hay hueco.
         ultimo_valor = new_data(ultimo_valor) # Se genera el nuevo valor.
         valores[i] = ultimo_valor # Se actualiza en la posición respectiva del productor el nuevo valor
-        print (f"producer {current_process().name} almacenado {ultimo_valor}")
+        print (f"producer {current_process().name} ha almacenado {ultimo_valor}")
         non_empty.release() #se aumenta en uno la capacidad del semáforo encargado de regular 
         # la existencia de valores en el buffer antes de consumir.
     # Por último se repite el proceso añadiendo un -1 como símbolo de finalización de la produción.
     empty.acquire()
     valores[i] = -1
+    print (f"producer {current_process().name} ha terminado de producir")
     non_empty.release()
     
         
@@ -77,7 +78,7 @@ def consumer(valores, sol,non_empty_list,empty_list):
         valor = minimo(valores)[1] # valor del elemento mínimo
         sol.append(valor) # añadimos el valor a la solución
         valores[indice] = -2 # se actualiza la posición como vacía en dicho productor.
-        print (f" almacenando {valor} del productor {indice}")
+        print (f"consumido {valor} del productor {indice}")
         # Se aumenta en uno la capacidad del semáforo (del proceso del cual se ha consumido)
         # que se encarga de comprobrar la existencia de posiciones libres en los buffers antes de producir.
         empty_list[indice].release()
@@ -114,7 +115,7 @@ def main():
                         name=f'prod_{i}',
                         args=(valores_consumidores,non_empty_list[i], empty_list[i]))
                 for i in range(NPROD) ]
-     # Se crea un consumidor que recibe por parámetros, la lista de buffers, la lista solución
+     # Se crea un consumidor que recibe por parámetros, la lista de valores producidos, la lista solución
      # y ambas listas de semáforos.
      consumidor = Process(target=consumer,args=(valores_consumidores,solucion,non_empty_list, empty_list))
      #Se inicializan y concatenan los procesos.
